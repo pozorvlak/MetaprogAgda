@@ -175,10 +175,12 @@ andAssocL (x , y , z) = (x , y) , z
 --   [C-c C-c] and [C-c C-a]
 
 distribute : {A B C : Set} -> A * (B + C) -> (A * B) + (A * C)
-distribute x = {!!}
+distribute (a , tt , b) = tt , (a , b)
+distribute (a , ff , c) = ff , (a , c)
 
 factor : {A B C : Set} -> (A * B) + (A * C) -> A * (B + C)
-factor x = {!!}
+factor (tt , a , b) = a , (tt , b)
+factor (ff , a , c) = a , ({!!} , {!!})
 
 
 -- 1.2.4 try to implement the following operations; try to use only
