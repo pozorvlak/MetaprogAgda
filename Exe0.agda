@@ -65,7 +65,7 @@ makeTree (x , xs) = insertTree x (makeTree xs)
 
 flatten : {X : Set} -> Tree X -> List X
 flatten leaf = <>
-flatten (t <[ x ]> t₁) = (flatten t) ++ (x , <>) ++ (flatten t₁)
+flatten (t <[ x ]> t₁) = (flatten t) ++ (x , flatten t₁)
 
 -- 1.1.5 using the above components, implement a sorting algorithm which
 -- works by building a tree and then flattening it
@@ -100,15 +100,18 @@ testTreeSort = refl
 -- is never given a name in your program
 
 fastFlatten : {X : Set} -> Tree X -> List X -> List X
-fastFlatten t = {!!}
+fastFlatten leaf acc = acc
+fastFlatten (l <[ x ]> r) acc = fastFlatten l (x , fastFlatten r acc)
 
 -- 1.1.8 use fastFlatten to build a fast version of tree sort
 
 fastTreeSort : List Nat -> List Nat
-fastTreeSort xs = {!!}
+fastTreeSort xs = fastFlatten (makeTree xs) <>
 
 -- 1.1.9 again, give unit tests which cover every line of code
 
+fastFlattenTest : (fastFlatten (leaf <[ 1 ]> (( leaf <[ 2 ]> leaf) <[ 3 ]> leaf)) <>) == (1 , 2 , 3 , <>)
+fastFlattenTest = refl
 
 myfastTest : (fastTreeSort (3 , 1 , 2 , <>)) == (1 , 2 , 3 , <>)
 myfastTest = refl
