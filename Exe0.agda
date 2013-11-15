@@ -19,7 +19,8 @@ data List (X : Set) : Set where
   _,_  : X -> List X -> List X
 
 _++_ : {X : Set} -> List X -> List X -> List X
-xs ++ ys = {!!}
+<> ++ ys = ys
+x , xs ++ ys = x , (xs ++ ys)
 
 infixr 3 _++_
 
@@ -47,25 +48,30 @@ suc m  <=  zero   = ff
 suc m  <=  suc n  = m <= n
 
 insertTree : Nat -> Tree Nat -> Tree Nat
-insertTree n t = {!!}
+insertTree n leaf = leaf <[ n ]> leaf
+insertTree n (t <[ x ]> t₁) with n <= x
+insertTree n (t <[ x ]> t₁) | tt = (insertTree n t) <[ x ]> t₁
+insertTree n (t <[ x ]> t₁) | ff = t <[ x ]> (insertTree n t₁)
 
 -- 1.1.3 implement the function which takes the elements of a list and
 -- builds an ordered tree from them, using insertTree
 
 makeTree : List Nat -> Tree Nat
-makeTree xs = {!!}
+makeTree <> = leaf
+makeTree (x , xs) = insertTree x (makeTree xs)
 
 -- 1.1.4 implement the function which flattens a tree to a list,
 -- using concatenation
 
 flatten : {X : Set} -> Tree X -> List X
-flatten t = {!!}
+flatten leaf = <>
+flatten (t <[ x ]> t₁) = (flatten t) ++ (x , <>) ++ (flatten t₁)
 
 -- 1.1.5 using the above components, implement a sorting algorithm which
 -- works by building a tree and then flattening it
 
 treeSort : List Nat -> List Nat
-treeSort = {!!}
+treeSort ts = flatten (makeTree ts)
 
 -- 1.1.6 give a collection of unit tests which cover every program line
 -- from 1.1.1 to 1.1.5
@@ -73,6 +79,17 @@ treeSort = {!!}
 myTest : (treeSort (3 , 1 , 2 , <>)) == (1 , 2 , 3 , <>)
 myTest = refl
 
+testConcatenation : ((1 , 2 , 3 , <>) ++ (4 , <>)) == (1 , 2 , 3 , 4 , <>)
+testConcatenation = refl
+
+testInsert : (insertTree 5 ((leaf <[ 3 ]> (leaf <[ 7 ]> leaf)))) == (leaf <[ 3 ]> ((leaf <[ 5 ]> leaf) <[ 7 ]> leaf))
+testInsert = refl
+
+testFlatten : (flatten (leaf <[ 1 ]> (( leaf <[ 2 ]> leaf) <[ 3 ]> leaf))) == (1 , 2 , 3 , <>)
+testFlatten = refl
+
+testTreeSort : (treeSort (3 , 1 , 2 , <>)) == (1 , 2 , 3 , <>)
+testTreeSort = refl
 
 -- 1.1.7 implement a fast version of flatten, taking an accumulating parameter,
 -- never using ++. and ensuring that the law
