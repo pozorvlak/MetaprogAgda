@@ -124,43 +124,50 @@ myfastTest = refl
 --   [C-c C-c] and [C-c C-a]
 
 inl : {A B : Set} -> A -> A + B
-inl a = {!!}
+inl a = tt , a
 
 inr : {A B : Set} -> B -> A + B
-inr b = {!!}
+inr b = ff , b
 
 orCommute : {A B : Set} -> A + B -> B + A
-orCommute x = {!!}
+orCommute (tt , snd) = ff , snd
+orCommute (ff , snd) = tt , snd
 
 orAbsorbL : {A : Set} -> Zero + A -> A
-orAbsorbL x = {!!}
+orAbsorbL (tt , ())
+orAbsorbL (ff , snd) = snd
 
 orAbsorbR : {A : Set} -> A + Zero -> A
-orAbsorbR x = {!!}
+orAbsorbR (tt , snd) = snd
+orAbsorbR (ff , ())
 
 orAssocR : {A B C : Set} -> (A + B) + C -> A + (B + C)
-orAssocR x = {!!}
+orAssocR (tt , tt , snd) = tt , snd
+orAssocR (tt , ff , snd) = ff , (tt , snd)
+orAssocR (ff , snd) = ff , (ff , snd)
 
 orAssocL : {A B C : Set} -> A + (B + C) -> (A + B) + C
-orAssocL x = {!!}
+orAssocL (tt , snd) = tt , (tt , snd)
+orAssocL (ff , tt , snd) = tt , (ff , snd)
+orAssocL (ff , ff , snd) = ff , snd
 
 -- 1.2.2 implement the following operations; try to use only
 --   [C-c C-c] and [C-c C-a]
 
 andCommute : {A B : Set} -> A * B -> B * A
-andCommute x = {!!}
+andCommute (fst , snd) = snd , fst
 
 andAbsorbL : {A : Set} -> A -> One * A
-andAbsorbL x = {!!}
+andAbsorbL x = <> , x
 
 andAbsorbR : {A : Set} -> A -> A * One
-andAbsorbR x = {!!}
+andAbsorbR x = x , <>
 
 andAssocR : {A B C : Set} -> (A * B) * C -> A * (B * C)
-andAssocR x = {!!}
+andAssocR ((x , y) , z) = x , y , z
 
 andAssocL : {A B C : Set} -> A * (B * C) -> (A * B) * C
-andAssocL x = {!!}
+andAssocL (x , y , z) = (x , y) , z
 
 -- how many times is [C-c C-c] really needed?
 
