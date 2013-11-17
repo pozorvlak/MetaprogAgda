@@ -180,8 +180,7 @@ distribute (a , ff , c) = ff , (a , c)
 
 factor : {A B C : Set} -> (A * B) + (A * C) -> A * (B + C)
 factor (tt , a , b) = a , (tt , b)
-factor (ff , a , c) = a , ({!!} , {!!})
-
+factor (ff , a , c) = a , (ff , c)
 
 -- 1.2.4 try to implement the following operations; try to use only
 --   [C-c C-c] and [C-c C-a]; at least one of them will prove to be
@@ -192,16 +191,18 @@ Not : Set -> Set
 Not X = X -> Zero
 
 deMorgan1 : {A B : Set} -> (Not A + Not B) -> (A * B) -> Zero
-deMorgan1 x = {!!}
+deMorgan1 (tt , a') = λ z → a' (fst z)
+deMorgan1 (ff , b') = λ z → b' (snd z)
 
 deMorgan2 : {A B : Set} -> Not (A * B) -> (Not A + Not B)
-deMorgan2 x = {!!}
+deMorgan2 x = {!!} , {!!}
 
 deMorgan3 : {A B : Set} -> (Not A * Not B) -> (A + B) -> Zero
-deMorgan3 x y = {!!}
+deMorgan3 x (tt , a) = fst x a
+deMorgan3 x (ff , b) = snd x b
 
 deMorgan4 : {A B : Set} -> Not (A + B) -> (Not A * Not B)
-deMorgan4 x = {!!}
+deMorgan4 x = (x o inl) , (x o inr) -- had to do this by hand
 
 
 -- 1.2.5 try to implement the following operations; try to use only
@@ -210,16 +211,18 @@ deMorgan4 x = {!!}
 --   why it's impossible
 
 dnegI : {X : Set} -> X -> Not (Not X)
-dnegI x f = {!!}
+dnegI x f = f x
 
-dnegE : {X : Set} -> Not (Not X) -> X
-dnegE = {!!}
+-- dnegE : {X : Set} -> Not (Not X) -> X
+-- dnegE = {!!}
+-- no way to introduce an X. Violates excluded middle?
 
 neg321 : {X : Set} -> Not (Not (Not X)) -> Not X
-neg321 nnnx x = {!!}
+neg321 nnnx x = nnnx (λ z → z x)
 
 hamlet : {B : Set} -> B + Not B
 hamlet = {!!}
+-- I think this one's impossible too.
 
 nnHamlet : {B : Set} -> Not (Not (B + Not B))
-nnHamlet noham = {!!}
+nnHamlet noham = noham hamlet
