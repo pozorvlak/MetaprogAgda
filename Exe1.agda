@@ -439,8 +439,8 @@ NatInd :  forall {l}(P : Tree NatT -> Set l) ->
           (n : Tree NatT) -> P n
 NatInd P z s n = {!!}
 
-Dec : Set -> Set
-Dec X = X + (X -> Zero)
+-- Dec : Set -> Set
+-- Dec X = X + (X -> Zero)
 
 eq? : (N : Normal)(sheq? : (s s' : Shape N) -> Dec (s == s')) ->
       (t t' : Tree N) -> Dec (t == t')
