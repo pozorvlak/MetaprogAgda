@@ -61,7 +61,7 @@ proj (x , xs) zero = x
 proj (x , xs) (suc i) = proj xs i
 
 enum : forall {n} -> Vec (Fin n) n
-enum {zero} = <>     -- why is this line needed?
+enum {zero} = <>
 enum {suc n} = zero , (vmap suc enum)
 
 tabulate : forall {n X} -> (Fin n -> X) -> Vec X n
