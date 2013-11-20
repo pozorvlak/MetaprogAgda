@@ -60,17 +60,9 @@ proj : forall {n X} -> Vec X n -> Fin n -> X
 proj (x , xs) zero = x
 proj (x , xs) (suc i) = proj xs i
 
-iterate : forall {n X} -> (X -> X) -> X -> Vec X n
-iterate {zero} f start = <>
-iterate {suc n} f start = start , iterate f (f start)
-
-embed : forall {n} -> Fin n -> Fin (suc n)
-embed zero = zero
-embed (suc i) = suc (embed i)
-
 enum : forall {n} -> Vec (Fin n) n
 enum {zero} = <>     -- why is this line needed?
-enum {suc n} = iterate (suc o embed) zero
+enum {suc n} = zero , (vmap suc enum)
 
 tabulate : forall {n X} -> (Fin n -> X) -> Vec X n
 tabulate {n} f = vmap f enum
