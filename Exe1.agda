@@ -32,19 +32,22 @@ data Vec (X : Set) : Nat -> Set where
   _,_  : {n : Nat} -> X -> Vec X n ->  Vec X (suc n)
 
 zip1 : forall {n S T} -> Vec S n -> Vec T n -> Vec (S * T) n
-zip1 ss ts = {!!}
+zip1 <> <> = <>
+zip1 (s , ss) (t , ts) = (s , t) , (zip1 ss ts)
 
 vec : forall {n X} -> X -> Vec X n
-vec {n} x = {!!}
+vec {zero} x = <>
+vec {suc n} x = x , vec x
 
 vapp :  forall {n S T} -> Vec (S -> T) n -> Vec S n -> Vec T n
-vapp fs ss = {!!}
+vapp <> <> = <>
+vapp (f , fs) (s , ss) = (f s) , (vapp fs ss)
 
 vmap : forall {n S T} -> (S -> T) -> Vec S n -> Vec T n
-vmap f ss = {!!}
+vmap f xs = vapp (vec f) xs
 
 zip2 : forall {n S T} -> Vec S n -> Vec T n -> Vec (S * T) n
-zip2 ss ts = {!!}
+zip2 ss ts = vapp (vmap _,_ ss) ts
 
 
 --[Finite sets and projection from vectors]
@@ -111,7 +114,7 @@ record Monoid (X : Set) : Set where
     neut  : X
     _&_   : X -> X -> X
   monoidApplicative : Applicative \ _ -> X
-  monoidApplicative = {!!}
+  monoidApplicative = record { pure = λ {X₁} _ → neut; _<*>_ = λ {S} {T} z z₁ → z & z₁ }
 open Monoid {{...}} public -- it's not obvious that we'll avoid ambiguity
 
 --Show by construction that the pointwise product of |Applicative|s is
@@ -206,7 +209,7 @@ nPair : forall {X}(F G : Normal) -> <! F !>N X * <! G !>N X -> <! F *N G !>N X
 nPair F G fxgx = {!!}
 
 listNMonoid : {X : Set} -> Monoid (<! ListN !>N X)
-listNMonoid = {!!}
+listNMonoid = λ {X} → record { neut = zero , _; _&_ = λ z z₁ → {!!} , _ }
 
 sumMonoid : Monoid Nat
 sumMonoid = record { neut = 0; _&_ = _+Nat_ }
