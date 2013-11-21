@@ -67,6 +67,9 @@ enum {suc n} = zero , (vmap suc enum)
 tabulate : forall {n X} -> (Fin n -> X) -> Vec X n
 tabulate {n} f = vmap f enum
 
+testTab : tabulate {3} id == (zero , (suc zero) , (suc (suc zero)) , <>)
+testTab = refl
+
 -- Functors and Applicatives
 
 record EndoFunctor (F : Set -> Set) : Set1 where
