@@ -104,8 +104,13 @@ record Monad (F : Set -> Set) : Set1 where
     ;  _<*>_  = \ ff fs -> ff >>= \ f -> fs >>= \ s -> return (f s) }
 open Monad {{...}} public
 
+bindVec : {n : Nat} -> forall {S T} -> Vec S n -> (S -> Vec T n) -> Vec T n
+bindVec ss f = vmap proj (vmap f ss) <*> enum
+
 monadVec : {n : Nat} -> Monad \ X -> Vec X n
-monadVec = {!!}
+monadVec = record
+ {  return = vec
+  ; _>>=_ = bindVec }
 
 applicativeId : Applicative id
 applicativeId = {!!}
