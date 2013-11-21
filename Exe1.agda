@@ -116,10 +116,15 @@ monadVec = record
   ; _>>=_ = bindVec }
 
 applicativeId : Applicative id
-applicativeId = {!!}
+applicativeId = record { pure = id; _<*>_ = \ f x -> f x }
 
 applicativeComp : forall {F G} -> Applicative F -> Applicative G -> Applicative (F o G)
-applicativeComp aF aG = {!!}
+applicativeComp aF aG = record {
+  pure = (pure {{aF}}) o (pure {{aG}}) ;
+  _<*>_ = λ {S} {T} z →
+              aF Applicative.<*>
+              (aF Applicative.<*> Applicative.pure aF
+                (Applicative._<*>_ aG)) z }
 
 record Monoid (X : Set) : Set where
   infixr 4 _&_
@@ -127,11 +132,19 @@ record Monoid (X : Set) : Set where
     neut  : X
     _&_   : X -> X -> X
   monoidApplicative : Applicative \ _ -> X
-  monoidApplicative = record { pure = λ {X₁} _ → neut; _<*>_ = λ {S} {T} z z₁ → z & z₁ }
+  monoidApplicative = record {
+    pure = λ {X₁} _ → neut;
+    _<*>_ = λ {S} {T} z z₁ → z & z₁ }
 open Monoid {{...}} public -- it's not obvious that we'll avoid ambiguity
 
 --Show by construction that the pointwise product of |Applicative|s is
 -- |Applicative|.
+
+applicativePointwise : forall {F G} -> Applicative F -> Applicative G -> Applicative (\ X -> (F X) * (G X))
+applicativePointwise aF aG = record {
+  pure = \ x -> (pure x , pure x);
+  _<*>_ = λ fs xs → (aF Applicative.<*> fst fs) (fst xs) ,
+                    (aG Applicative.<*> snd fs) (snd xs) }
 
 record Traversable (F : Set -> Set) : Set1 where
   field
