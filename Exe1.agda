@@ -146,7 +146,7 @@ traversableVec = record { traverse = vtr } where
   vtr {{aG}} f (s , ss)  = pure {{aG}} _,_ <*> f s <*> vtr f ss
 
 transpose : forall {m n X} -> Vec (Vec X n) m -> Vec (Vec X m) n
-transpose = {!!}
+transpose = traverse id
 
 crush :  forall {F X Y}{{TF : Traversable F}}{{M : Monoid Y}} ->
          (X -> Y) -> F X -> Y
@@ -156,6 +156,12 @@ crush {{M = M}} =
 
 {-Show that |Traversable| is closed under identity and composition.
 What other structure does it preserve?-}
+
+traversableId : Traversable id
+traversableId = record { traverse = id }
+
+traversableComp : forall {F G} -> Traversable F -> Traversable G -> Traversable (F o G)
+traversableComp aF aG = record { traverse = (traverse {{aF}}) o (traverse {{aG}}) }
 
 --\section{Arithmetic}
 
