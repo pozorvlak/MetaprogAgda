@@ -233,7 +233,7 @@ nPair : forall {X}(F G : Normal) -> <! F !>N X * <! G !>N X -> <! F *N G !>N X
 nPair F G ((shF , szF) , (shG , szG)) = (shF , shG) , (szF ++ szG)
 
 listNMonoid : {X : Set} -> Monoid (<! ListN !>N X)
-listNMonoid = λ {X} → record { neut = zero , _; _&_ = λ z z₁ → {!!} , _ }
+listNMonoid = λ {X} → record { neut = zero , _; _&_ = λ xs ys → (fst xs) +Nat (fst ys) , _ }
 
 sumMonoid : Monoid Nat
 sumMonoid = record { neut = 0; _&_ = _+Nat_ }
