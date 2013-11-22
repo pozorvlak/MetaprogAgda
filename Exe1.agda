@@ -199,10 +199,10 @@ ListN = Nat / id
 
 
 KN : Set -> Normal
-KN A = {!!}
+KN A = A / (λ _ → zero)
 
 IN : Normal
-IN = {!!}
+IN = VecN 1
 
 _+N_ : Normal -> Normal -> Normal
 (ShF / szF) +N (ShG / szG) = (ShF + ShG) / vv szF <?> szG
@@ -226,10 +226,11 @@ nOut F G xs' with nCase F G xs'
 nOut F G .(nInj F G xs) | from xs = xs
 
 _++_ : forall {m n X} -> Vec X m -> Vec X n -> Vec X (m +Nat n)
-xs ++ ys = {!!}
+<> ++ ys = ys
+(x , xs) ++ ys = x , (xs ++ ys)
 
 nPair : forall {X}(F G : Normal) -> <! F !>N X * <! G !>N X -> <! F *N G !>N X
-nPair F G fxgx = {!!}
+nPair F G ((shF , szF) , (shG , szG)) = (shF , shG) , (szF ++ szG)
 
 listNMonoid : {X : Set} -> Monoid (<! ListN !>N X)
 listNMonoid = λ {X} → record { neut = zero , _; _&_ = λ z z₁ → {!!} , _ }
