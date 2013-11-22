@@ -166,11 +166,18 @@ traversableComp aF aG = record { traverse = (traverse {{aF}}) o (traverse {{aG}}
 --\section{Arithmetic}
 
 _+Nat_ : Nat -> Nat -> Nat
-x +Nat y = {!!}
+zero +Nat y = y
+suc x +Nat y = suc (x +Nat y)
 
 _*Nat_ : Nat -> Nat -> Nat
-x *Nat y = {!!}
+zero *Nat y = zero
+suc x *Nat y = y +Nat (x *Nat y)
 
+testPlus : (5 +Nat 4) == 9
+testPlus = refl
+
+testMult : (2 *Nat 3) == 6
+testMult = refl
 
 --\section{Normal Functors}
 
