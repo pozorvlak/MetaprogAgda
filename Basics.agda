@@ -59,6 +59,7 @@ _ =!! refl >> q = q
 _<<_!!=_ : forall {l}{X : Set l}(x : X){y z} -> y == x -> y == z -> x == z
 _ << refl !!= q = q
 
+
 _<QED> : forall {l}{X : Set l}(x : X) -> x == x
 x <QED> = refl
 

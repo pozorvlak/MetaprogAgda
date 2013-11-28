@@ -248,8 +248,13 @@ _++_ : forall {m n X} -> Vec X m -> Vec X n -> Vec X (m +Nat n)
 nPair : forall {X}(F G : Normal) -> <! F !>N X * <! G !>N X -> <! F *N G !>N X
 nPair F G ((shF , szF) , (shG , szG)) = (shF , shG) , (szF ++ szG)
 
+_++N_ : forall {X} -> <! ListN !>N X -> <! ListN !>N X -> <! ListN !>N X
+_++N_ = λ xs ys → (fst xs) +Nat (fst ys) , (snd xs) ++ (snd ys)
+
 listNMonoid : {X : Set} -> Monoid (<! ListN !>N X)
-listNMonoid = λ {X} → record { neut = zero , _; _&_ = λ xs ys → (fst xs) +Nat (fst ys) , _ }
+listNMonoid = λ {X} → record
+  { neut = zero , <>
+  ; _&_ =  _++N_ }  
 
 sumMonoid : Monoid Nat
 sumMonoid = record { neut = 0; _&_ = _+Nat_ }
@@ -296,7 +301,7 @@ _><_ : Normal -> Normal -> Normal
 (ShF / szF) >< (ShG / szG) = (ShF * ShG) / vv \ f g -> szF f *Nat szG g
 
 swap : (F G : Normal) -> (F >< G) -N> (G >< F)
-swap F G x = {!!}
+swap F G x = ((snd x) , (fst x)) , {!!}
 
 drop : (F G : Normal) -> (F >< G) -N> (F oN G)
 drop F G x = {!!}
@@ -311,7 +316,7 @@ record MonoidOK X {{M : Monoid X}} : Set where
     absorbR  : (x : X) ->      x & neut == x
     assoc    : (x y z : X) ->  (x & y) & z == x & (y & z)
 
-{- Do this after you've defined +Nat
+-- Do this after you've defined +Nat
 natMonoidOK : MonoidOK Nat
 natMonoidOK = record
   {  absorbL  = \ _ -> refl
@@ -326,15 +331,31 @@ natMonoidOK = record
   assoc+ zero     y z                       = refl
   assoc+ (suc x)  y z rewrite assoc+ x y z  = refl
 
+_==*_ : forall {x y x' y'} -> (x == x') -> (y == y') -> (x * y) == (x' * y')
+_==*_ refl refl = refl
+
 listNMonoidOK : {X : Set} -> MonoidOK (<! ListN !>N X)
-listNMonoidOK {X} = {!!}
--}
+listNMonoidOK {X} = record
+  {  absorbL = λ x → {!!}
+  ;  absorbR = λ x → {!!}
+  ;  assoc = {!!}
+  } where
+  _&<> : forall xs -> xs ++N neut == xs
+  (zero , v) &<> = ?
+  (suc n , v) &<> = {!!}
+
 
 {-
 \begin{exe}[a not inconsiderable problem]
 Find out what goes wrong when you try to state associativity of vector |++|,
 let alone prove it. What does it tell you about our |==| setup?
 \end{exe}
+-}
+
+{-
+assoc++ : forall { X l m n } -> (xs : Vec X l) -> (ys : Vec X m) -> (zs : Vec X n) -> ((xs ++ ys) ++ zs) == (xs ++ (ys ++ zs))
+assoc++ = ?
+-- Agda can't recognise that the types are isomorphic, because you need to apply a proof to show that the sizes are equal.
 -}
 
 record MonoidHom {X}{{MX : Monoid X}}{Y}{{MY : Monoid Y}}(f : X -> Y) : Set where
