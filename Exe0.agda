@@ -41,7 +41,6 @@ data Nat : Set where
 {-# BUILTIN ZERO zero #-}
 {-# BUILTIN SUC suc #-}
 
-
 _<=_ : Nat -> Nat -> Two
 zero   <=  n      = tt
 suc m  <=  zero   = ff
@@ -49,9 +48,9 @@ suc m  <=  suc n  = m <= n
 
 insertTree : Nat -> Tree Nat -> Tree Nat
 insertTree n leaf = leaf <[ n ]> leaf
-insertTree n (t <[ x ]> t₁) with n <= x
-insertTree n (t <[ x ]> t₁) | tt = (insertTree n t) <[ x ]> t₁
-insertTree n (t <[ x ]> t₁) | ff = t <[ x ]> (insertTree n t₁)
+insertTree n (_ <[ x ]> _) with n <= x
+insertTree n (l <[ x ]> r) | tt = insertTree n l <[ x ]> r
+insertTree n (l <[ x ]> r) | ff = l <[ x ]> insertTree n r
 
 -- 1.1.3 implement the function which takes the elements of a list and
 -- builds an ordered tree from them, using insertTree
@@ -65,13 +64,13 @@ makeTree (x , xs) = insertTree x (makeTree xs)
 
 flatten : {X : Set} -> Tree X -> List X
 flatten leaf = <>
-flatten (t <[ x ]> t₁) = (flatten t) ++ (x , flatten t₁)
+flatten (l <[ x ]> r) = flatten l ++ x , flatten r
 
 -- 1.1.5 using the above components, implement a sorting algorithm which
 -- works by building a tree and then flattening it
 
 treeSort : List Nat -> List Nat
-treeSort ts = flatten (makeTree ts)
+treeSort = flatten o makeTree
 
 -- 1.1.6 give a collection of unit tests which cover every program line
 -- from 1.1.1 to 1.1.5
