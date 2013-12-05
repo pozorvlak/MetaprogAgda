@@ -152,7 +152,7 @@ Sub  Gam Del  = forall {tau} -> tau <: Gam -> Del !- tau
 The trouble with defining the action of substitution for a de Bruijn
 representation is the need to shift indices when the context grows.
 Here is one way to address that situation.
-First, let me define\nudge{|<><| is pronounce `fish',
+First, let me define\nudge{|<><| is pronounced `fish',
 for historical reasons.} context extension as
 concatenation with a cons-list, using the |<><| operator.
 
@@ -245,7 +245,7 @@ lambda' f = lam (f \ {Xi} -> var (weak Xi zero))
 \end{code}
 
 %format myTest' = "\F{myTest}"
-But sadly, the followinf does not typecheck
+But sadly, the following does not typecheck
 \begin{spec}
 myTest' : Em !- iota ->> iota
 myTest' = lambda' \ x -> x
