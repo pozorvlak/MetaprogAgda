@@ -139,11 +139,15 @@ embed the smaller context back into the larger.
 -}
 
 _-_ : forall (Gam : Cx Ty){tau}(x : tau <: Gam) -> Cx Ty
-Gam - x = {!!}
+Em - x = Em
+Gam :: x - zero = Gam
+Gam :: x - suc y = (Gam - y) :: x
 infixl 4 _-_
 
 _/=_ : forall {Gam sg}(x : sg <: Gam) -> Ren (Gam - x) Gam
-x /= y = {!!}
+zero /= y = suc y
+suc x /= zero = zero
+suc x /= suc y = suc (x /= y)
 
 data Veq? {Gam sg}(x : sg <: Gam) : forall {tau} -> tau <: Gam -> Set where
   same  :                                      Veq? x x
@@ -152,16 +156,23 @@ data Veq? {Gam sg}(x : sg <: Gam) : forall {tau} -> tau <: Gam -> Set where
 --Show that every |y| is discriminable with respect to a given |x|.
 
 veq? : forall {Gam sg tau}(x : sg <: Gam)(y : tau <: Gam) -> Veq? x y
-veq? x y = {!!}
+veq? zero zero = same
+veq? zero (suc y) = diff y
+veq? (suc x) zero = diff zero
+veq? (suc x) (suc y) with veq? x y
+veq? (suc .y) (suc y) | same = same
+veq? (suc x) (suc .(x /= y)) | diff y = diff (suc y)
 
 --Show how to propagate a renaming through a normal form.
 mutual
 
   renNm : forall {Gam Del tau} -> Ren Gam Del -> Gam != tau -> Del != tau
-  renNm r t = {!!}
+  renNm r (lam t) = lam (renNm (wkr r) t)
+  renNm r (x $ ys) = r x $ renSp r ys
 
   renSp : forall {Gam Del tau} -> Ren Gam Del -> Gam !=* tau -> Del !=* tau
-  renSp r ss = {!!}
+  renSp r <> = <>
+  renSp r (x , ss) = renNm r x , renSp r ss
 
 -- Implement hereditary substitution for normal forms and spines,
 -- defined mutually with application of a normal form to a spine,
