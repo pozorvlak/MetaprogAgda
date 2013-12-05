@@ -182,15 +182,18 @@ mutual
 
   <<_:=_>>_ :  forall  {Gam sg tau} -> (x : sg <: Gam) -> Gam - x != sg -> 
                        Gam != tau -> Gam - x != tau
-  << x := s >> t = {!!}
+  << x := s >> lam t = lam {!!}
+  << x := s >> t $ ts = {!!} $ (<< x := s >>* ts)
 
   <<_:=_>>*_ :  forall  {Gam sg tau} -> (x : sg <: Gam) -> Gam - x != sg ->
                         Gam !=* tau -> Gam - x !=* tau
-  << x := s >>* ts = {!!}
+  << x := s >>* <> = <>
+  << x := s >>* (t , ts) = (<< x := s >> t) , (<< x := s >>* ts)
 
   _$$_ : forall  {Gam tau} ->
                  Gam != tau -> Gam !=* tau -> Gam != iota
-  f      $$ ss = {!!}
+  f $$ <> = f
+  f $$ s , ss = {!!} $ ss
 
 infix 3 _$$_ 
 infix 2 <<_:=_>>_
