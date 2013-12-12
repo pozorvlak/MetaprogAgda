@@ -182,7 +182,7 @@ mutual
 
   <<_:=_>>_ :  forall  {Gam sg tau} -> (x : sg <: Gam) -> Gam - x != sg -> 
                        Gam != tau -> Gam - x != tau
-  << x := s >> lam t = lam {!!}
+  << x := s >> lam t = lam (<< suc x := renNm (weak (_ , <>)) s >> t)
   << x := s >> t $ ts = {!!} $ (<< x := s >>* ts)
 
   <<_:=_>>*_ :  forall  {Gam sg tau} -> (x : sg <: Gam) -> Gam - x != sg ->
@@ -200,8 +200,12 @@ infix 2 <<_:=_>>_
 
 --Finish the following
 
+normalizeVariable : forall {Gam tau} -> (x : tau <: Gam) -> (Gam != tau)
+normalizeVariable {Gam} {iota} x = x $ <>
+normalizeVariable {Gam} {tau ->> sigma} x = lam {!!}
+
 normalize : forall {Gam tau} -> Gam !- tau -> Gam != tau
-normalize (var x)    = {!!}
+normalize (var x)    = normalizeVariable x
 normalize (lam t)    = lam (normalize t)
 normalize (app f s)  with  normalize f  | normalize s
 normalize (app f s)  |     lam t        | s'        = << zero := s' >> t
