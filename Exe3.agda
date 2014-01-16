@@ -37,11 +37,24 @@ _oc_ : Con -> Con -> Con
 {- {exe}[containers are endofunctors]
 Check that containers yield endofunctors which obey the laws. -}
 
+conMap : forall {C : Con} -> forall {S T} -> (S -> T) ->
+  <! C !>c S -> <! C !>c T
+conMap f xs = (fst xs) , (λ z → f (snd xs z))
+
 conEndoFunctor : {C : Con} -> EndoFunctor <! C !>c
-conEndoFunctor {S <1 P} = {!!}
+conEndoFunctor {S <1 P} = record { map = conMap }
+
+conIdOK : forall {C : Con}{X} -> conMap {C}{X}{X} id =1= id
+conIdOK = λ x → refl
+
+conCoOK : forall {C : Con}{R S T}(f : S -> T)(g : R -> S) ->
+  conMap f o (conMap {C}{R}{S} g) =1= conMap (f o g)
+conCoOK = {!!}
 
 conEndoFunctorOKP : {C : Con} -> EndoFunctorOKP <! C !>c
-conEndoFunctorOKP {S <1 P} = {!!}
+conEndoFunctorOKP {S <1 P} = record {
+  endoFunctorId = conIdOK;
+  endoFunctorCo = {!conCoOK!} }
 
 {- {exe}[closure properties]
 Check that the meanings of the operations on containers are justified
