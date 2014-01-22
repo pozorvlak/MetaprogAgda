@@ -49,6 +49,25 @@ vmap f xs = vapp (vec f) xs
 zip2 : forall {n S T} -> Vec S n -> Vec T n -> Vec (S * T) n
 zip2 ss ts = vapp (vmap _,_ ss) ts
 
+-- Find all the elements of a vector satisfying a predicate
+vfilter : forall {n S} -> (S -> Two) -> Vec S n -> Sg Nat (\ m -> Vec S m)
+vfilter f <> = zero , <>
+vfilter f (x , xs) with f x | vfilter f xs
+vfilter f (x , xs) | tt | m , ys = suc m , x , ys
+vfilter f (x , xs) | ff | vf = vf
+
+even? : Nat -> Two
+odd? : Nat -> Two
+even? zero = tt
+even? (suc n) = odd? n
+odd? zero = ff
+odd? (suc n) = even? n
+
+vfilterTest1 : vfilter even? (1 , 2 , 3 , 4 , 5 , <>) == 2 , (2 , 4 , <>)
+vfilterTest1 = refl
+
+vfilterTest2 : vfilter odd? (1 , 2 , 3 , 4 , 5 , <>) == 3 , (1 , 3 , 5 , <>)
+vfilterTest2 = refl
 
 --[Finite sets and projection from vectors]
 
