@@ -341,7 +341,7 @@ listNMonoidOK {X} = record
   ;  assoc = {!!}
   } where
   _&<> : forall xs -> xs ++N neut == xs
-  (zero , v) &<> = ?
+  (zero , v) &<> = {!!}
   (suc n , v) &<> = {!!}
 
 
@@ -352,11 +352,24 @@ let alone prove it. What does it tell you about our |==| setup?
 \end{exe}
 -}
 
-{-
-assoc++ : forall { X l m n } -> (xs : Vec X l) -> (ys : Vec X m) -> (zs : Vec X n) -> ((xs ++ ys) ++ zs) == (xs ++ (ys ++ zs))
-assoc++ = ?
+assocVecType : forall { X l m n } -> Vec X (l +Nat (m +Nat n)) == Vec X ((l +Nat m) +Nat n)
+assocVecType {X}{l}{m}{n} = cong (Vec X)
+  ( l +Nat (m +Nat n)
+     << MonoidOK.assoc natMonoidOK l m n !!=
+   (l +Nat m) +Nat n
+     <QED>)
+
+assocVecTypeLR : forall { X l m n } -> Vec X ((l +Nat m) +Nat n) -> Vec X (l +Nat (m +Nat n))
+assocVecTypeLR {X}{l}{m}{n} = subst (MonoidOK.assoc natMonoidOK l m n) (Vec X)
+
+assoc++ : forall { X l m n } -> (xs : Vec X l) -> (ys : Vec X m) -> (zs : Vec X n) -> assocVecTypeLR {X}{l}{m}{n}((xs ++ ys) ++ zs) == (xs ++ (ys ++ zs))
+assoc++ <> ys zs = refl
+assoc++ (x , xs) ys zs =
+ {!(x , (xs ++ ys) ++ zs)
+  << ? !!=
+      x , xs ++ (ys ++ zs) <QED>!}
 -- Agda can't recognise that the types are isomorphic, because you need to apply a proof to show that the sizes are equal.
--}
+
 
 record MonoidHom {X}{{MX : Monoid X}}{Y}{{MY : Monoid Y}}(f : X -> Y) : Set where
   field
